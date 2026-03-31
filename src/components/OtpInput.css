@@ -1,0 +1,27 @@
+.otp-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.otp-digit {
+  width: calc(100% / 6 - 0.45rem);
+  aspect-ratio: 1;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.otp-digit:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196, 98, 45, 0.1);
+}

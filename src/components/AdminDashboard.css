@@ -1,0 +1,149 @@
+.admin-dashboard {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.btn-logout {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-logout:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-sites {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .admin-sites {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+.admin-site-card {
+  flex: 1;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.admin-site-card h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.admin-site-card label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+}
+
+.admin-site-card input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 1rem;
+}
+
+.admin-site-card input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196, 98, 45, 0.1);
+}
+
+.admin-preview {
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 2px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.admin-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.admin-message {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-top: 1.5rem;
+}
+
+.admin-message.success {
+  color: #27ae60;
+}
+
+.admin-message.error {
+  color: #c0392b;
+}
+
+.btn-admin-save {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  margin: 1.5rem auto 0;
+  padding: 1rem;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-admin-save:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-admin-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 4rem 0;
+  font-size: 1.1rem;
+}
