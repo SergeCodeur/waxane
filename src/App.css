@@ -68,6 +68,13 @@
   }
 }
 
+.voting-closed-msg {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-top: 2rem;
+}
+
 .results-page-loading {
   text-align: center;
   color: var(--text-muted);

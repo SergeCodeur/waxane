@@ -7,6 +7,7 @@ function AdminDashboard({ token, onLogout }) {
     siteB: { previewUrl: '', imageUrl: '' },
   })
   const [resultsPublished, setResultsPublished] = useState(false)
+  const [votingOpen, setVotingOpen] = useState(true)
   const [results, setResults] = useState(null)
   const [voters, setVoters] = useState([])
   const [saving, setSaving] = useState(false)
@@ -25,6 +26,7 @@ function AdminDashboard({ token, onLogout }) {
           siteB: { previewUrl: configData.siteB?.previewUrl || '', imageUrl: configData.siteB?.imageUrl || '' },
         })
         setResultsPublished(!!configData.resultsPublished)
+        setVotingOpen(configData.votingOpen !== false)
         setResults(resultsData)
         setVoters(votersData.voters || [])
       })
@@ -50,7 +52,7 @@ function AdminDashboard({ token, onLogout }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ ...config, resultsPublished }),
+        body: JSON.stringify({ ...config, resultsPublished, votingOpen }),
       })
 
       if (!res.ok) {
@@ -142,18 +144,34 @@ function AdminDashboard({ token, onLogout }) {
         )}
       </div>
 
-      <div className="admin-results-toggle">
-        <label className="toggle-label">
-          <input
-            type="checkbox"
-            checked={resultsPublished}
-            onChange={(e) => setResultsPublished(e.target.checked)}
-          />
-          <span className="toggle-switch" />
-          <span className="toggle-text">
-            {resultsPublished ? 'Résultats visibles par les votants' : 'Résultats masqués'}
-          </span>
-        </label>
+      <div className="admin-toggles">
+        <div className="admin-toggle-row">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={votingOpen}
+              onChange={(e) => setVotingOpen(e.target.checked)}
+            />
+            <span className="toggle-switch" />
+            <span className="toggle-text">
+              {votingOpen ? 'Votes ouverts' : 'Votes fermés'}
+            </span>
+          </label>
+        </div>
+
+        <div className="admin-toggle-row">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={resultsPublished}
+              onChange={(e) => setResultsPublished(e.target.checked)}
+            />
+            <span className="toggle-switch" />
+            <span className="toggle-text">
+              {resultsPublished ? 'Résultats visibles par les votants' : 'Résultats masqués'}
+            </span>
+          </label>
+        </div>
       </div>
 
       {message && (

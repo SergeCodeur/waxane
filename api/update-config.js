@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Token invalide' })
   }
 
-  const { siteA, siteB, resultsPublished } = req.body || {}
+  const { siteA, siteB, resultsPublished, votingOpen } = req.body || {}
 
   if (!siteA || !siteB) {
     return res.status(400).json({ error: 'Configuration incomplète' })
@@ -47,7 +47,8 @@ export default async function handler(req, res) {
   await Promise.all([
     redis.set('config:sites', config),
     redis.set('config:resultsPublished', resultsPublished ? '1' : '0'),
+    redis.set('config:votingOpen', votingOpen === false ? '0' : '1'),
   ])
 
-  return res.status(200).json({ success: true, config, resultsPublished: !!resultsPublished })
+  return res.status(200).json({ success: true, config, resultsPublished: !!resultsPublished, votingOpen: votingOpen !== false })
 }

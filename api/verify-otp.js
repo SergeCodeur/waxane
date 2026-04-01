@@ -10,6 +10,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  // Vérifier si le vote est ouvert
+  const votingOpen = await redis.get('config:votingOpen')
+  if (String(votingOpen) === '0') {
+    return res.status(403).json({ error: 'voting_closed' })
+  }
+
   const { numero, code, siteChoice } = req.body || {}
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown'
 

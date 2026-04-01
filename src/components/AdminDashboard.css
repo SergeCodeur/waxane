@@ -189,8 +189,15 @@
   font-variant-numeric: tabular-nums;
 }
 
-.admin-results-toggle {
+.admin-toggles {
   margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.admin-toggle-row {
   display: flex;
   justify-content: center;
 }

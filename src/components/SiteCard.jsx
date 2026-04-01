@@ -1,6 +1,6 @@
 import './SiteCard.css'
 
-function SiteCard({ name, previewUrl, imageUrl, onVote, disabled }) {
+function SiteCard({ name, previewUrl, imageUrl, onVote, disabled, votingClosed }) {
   return (
     <article className="card">
       <h2 className="card-title">{name}</h2>
@@ -21,7 +21,7 @@ function SiteCard({ name, previewUrl, imageUrl, onVote, disabled }) {
           Voir le site
         </a>
         <button className="btn-vote" onClick={onVote} disabled={disabled}>
-          {disabled ? 'Vote enregistré' : 'Voter'}
+          {votingClosed ? 'Vote fermé' : disabled ? 'Vote enregistré' : 'Voter'}
         </button>
       </div>
     </article>

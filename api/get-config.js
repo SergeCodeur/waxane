@@ -10,9 +10,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const [config, resultsPublished] = await Promise.all([
+  const [config, resultsPublished, votingOpen] = await Promise.all([
     redis.get('config:sites'),
     redis.get('config:resultsPublished'),
+    redis.get('config:votingOpen'),
   ])
 
   const defaultConfig = {
@@ -23,5 +24,6 @@ export default async function handler(req, res) {
   return res.status(200).json({
     ...(config || defaultConfig),
     resultsPublished: String(resultsPublished) === '1',
+    votingOpen: votingOpen === null ? true : String(votingOpen) === '1',
   })
 }

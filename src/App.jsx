@@ -23,6 +23,7 @@ function VotePage() {
   const [hasVoted, setHasVoted] = useState(false)
   const [config, setConfig] = useState(null)
   const [resultsPublished, setResultsPublished] = useState(false)
+  const [votingOpen, setVotingOpen] = useState(true)
 
   useEffect(() => {
     fetch('/api/get-config')
@@ -30,6 +31,7 @@ function VotePage() {
       .then((data) => {
         setConfig(data)
         setResultsPublished(!!data.resultsPublished)
+        setVotingOpen(data.votingOpen !== false)
       })
       .catch(() => {
         setConfig({
@@ -66,16 +68,22 @@ function VotePage() {
           previewUrl={config?.siteA?.previewUrl || '#'}
           imageUrl={config?.siteA?.imageUrl || ''}
           onVote={() => handleVote('siteA')}
-          disabled={hasVoted}
+          disabled={hasVoted || !votingOpen}
+          votingClosed={!votingOpen}
         />
         <SiteCard
           name="Site B"
           previewUrl={config?.siteB?.previewUrl || '#'}
           imageUrl={config?.siteB?.imageUrl || ''}
           onVote={() => handleVote('siteB')}
-          disabled={hasVoted}
+          disabled={hasVoted || !votingOpen}
+          votingClosed={!votingOpen}
         />
       </main>
+
+      {!votingOpen && !hasVoted && (
+        <p className="voting-closed-msg">La période de vote est terminée.</p>
+      )}
 
       {hasVoted && <Results published={resultsPublished} config={config} />}
 
