@@ -22,6 +22,6 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     ...(config || defaultConfig),
-    resultsPublished: resultsPublished === '1',
+    resultsPublished: String(resultsPublished) === '1',
   })
 }

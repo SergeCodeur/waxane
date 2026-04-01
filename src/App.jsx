@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import SiteCard from './components/SiteCard.jsx'
 import VoteModal from './components/VoteModal.jsx'
 import Results from './components/Results.jsx'
 import AdminLogin from './components/AdminLogin.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
 import './App.css'
+
+function Nav() {
+  const { pathname } = useLocation()
+  return (
+    <nav className="nav">
+      <Link to="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>Vote</Link>
+      <Link to="/results" className={`nav-link ${pathname === '/results' ? 'active' : ''}`}>Résultats</Link>
+    </nav>
+  )
+}
 
 function VotePage() {
   const [modalOpen, setModalOpen] = useState(false)
@@ -67,7 +77,7 @@ function VotePage() {
         />
       </main>
 
-      {hasVoted && <Results published={resultsPublished} />}
+      {hasVoted && <Results published={resultsPublished} config={config} />}
 
       {modalOpen && (
         <VoteModal
@@ -81,12 +91,16 @@ function VotePage() {
 
 function ResultsPage() {
   const [published, setPublished] = useState(false)
+  const [config, setConfig] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch('/api/get-config')
       .then((r) => r.json())
-      .then((data) => setPublished(!!data.resultsPublished))
+      .then((data) => {
+        setPublished(!!data.resultsPublished)
+        setConfig(data)
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -105,7 +119,7 @@ function ResultsPage() {
         <h1>Duel Web Dev</h1>
         <p className="subtitle">Résultats du vote</p>
       </header>
-      <Results published={published} />
+      <Results published={published} config={config} />
     </>
   )
 }
@@ -131,12 +145,18 @@ function AdminPage() {
 }
 
 function App() {
+  const { pathname } = useLocation()
+  const showNav = pathname === '/' || pathname === '/results'
+
   return (
-    <Routes>
-      <Route path="/" element={<VotePage />} />
-      <Route path="/results" element={<ResultsPage />} />
-      <Route path="/admin" element={<AdminPage />} />
-    </Routes>
+    <>
+      {showNav && <Nav />}
+      <Routes>
+        <Route path="/" element={<VotePage />} />
+        <Route path="/results" element={<ResultsPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    </>
   )
 }
 

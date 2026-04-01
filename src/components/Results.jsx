@@ -1,9 +1,47 @@
 import { useState, useEffect } from 'react'
 import './Results.css'
 
-function Results({ published }) {
+function CompetitorCard({ name, pct, votes, imageUrl, previewUrl, isWinner, pending }) {
+  return (
+    <div className={`res-competitor ${isWinner ? 'res-competitor--winner' : ''}`}>
+      <span className="res-site-name">{name}</span>
+
+      {imageUrl ? (
+        <img src={imageUrl} alt={`Aperçu ${name}`} className="res-thumb" />
+      ) : (
+        <div className="res-thumb res-thumb--empty">
+          <span>Aperçu</span>
+        </div>
+      )}
+
+      <span className={`res-pct ${pending ? 'res-pct--muted' : ''} ${isWinner ? 'res-pct--accent' : ''}`}>
+        {pending ? '--' : `${pct}%`}
+      </span>
+
+      <span className="res-votes">
+        {pending ? '- vote' : `${votes} vote${votes > 1 ? 's' : ''}`}
+      </span>
+
+      {previewUrl && previewUrl !== '#' && (
+        <a
+          className="res-preview-link"
+          href={previewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir le site
+        </a>
+      )}
+    </div>
+  )
+}
+
+function Results({ published, config }) {
   const [results, setResults] = useState(null)
   const [error, setError] = useState(false)
+
+  const siteA = config?.siteA || {}
+  const siteB = config?.siteB || {}
 
   useEffect(() => {
     if (!published) return
@@ -18,72 +56,81 @@ function Results({ published }) {
 
   if (!published) {
     return (
-      <div className="results">
-        <h2 className="results-title">Merci pour votre vote !</h2>
-        <p className="results-pending">Les résultats seront publiés prochainement.</p>
+      <div className="res">
+        <p className="res-subtitle">
+          Les résultats seront dévoilés une fois la période de vote terminée.<br />
+          Revenez bientôt !
+        </p>
+        <div className="res-scoreboard">
+          <CompetitorCard name="Site A" imageUrl={siteA.imageUrl} previewUrl={siteA.previewUrl} pending />
+          <div className="res-vs">VS</div>
+          <CompetitorCard name="Site B" imageUrl={siteB.imageUrl} previewUrl={siteB.previewUrl} pending />
+        </div>
+        <div className="res-combined-bar">
+          <div className="res-bar-a res-bar--muted" style={{ width: '50%' }} />
+          <div className="res-bar-b res-bar--muted" style={{ width: '50%' }} />
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="results">
-        <p className="results-error">Impossible de charger les résultats.</p>
+      <div className="res">
+        <p className="res-error">Impossible de charger les résultats.</p>
       </div>
     )
   }
 
   if (!results) {
-    return <div className="results"><p className="results-loading">Chargement des résultats...</p></div>
+    return <div className="res"><p className="res-loading">Chargement des résultats...</p></div>
   }
 
   const total = results.siteA + results.siteB
 
   if (total === 0) {
     return (
-      <div className="results">
-        <h2 className="results-title">Résultats</h2>
-        <p className="results-empty">Aucun vote pour l'instant</p>
+      <div className="res">
+        <p className="res-subtitle">Aucun vote pour l'instant</p>
       </div>
     )
   }
 
   const pctA = Math.round((results.siteA / total) * 100)
-  const pctB = Math.round((results.siteB / total) * 100)
-  const tie = results.siteA === results.siteB
-  const aWins = results.siteA >= results.siteB
+  const pctB = 100 - pctA
+  const aWins = results.siteA > results.siteB
+  const bWins = results.siteB > results.siteA
 
   return (
-    <div className="results">
-      <h2 className="results-title">Résultats</h2>
+    <div className="res">
+      <div className="res-scoreboard">
+        <CompetitorCard
+          name="Site A"
+          pct={pctA}
+          votes={results.siteA}
+          imageUrl={siteA.imageUrl}
+          previewUrl={siteA.previewUrl}
+          isWinner={aWins}
+        />
 
-      <div className="results-row">
-        <div className="results-label">
-          <span className="results-name">Site A</span>
-          <span className="results-count">{results.siteA} vote{results.siteA > 1 ? 's' : ''} — {pctA}%</span>
-        </div>
-        <div className="results-bar-track">
-          <div
-            className={`results-bar-fill ${tie || aWins ? 'leading' : 'trailing'}`}
-            style={{ width: `${pctA}%` }}
-          />
-        </div>
+        <div className="res-vs">VS</div>
+
+        <CompetitorCard
+          name="Site B"
+          pct={pctB}
+          votes={results.siteB}
+          imageUrl={siteB.imageUrl}
+          previewUrl={siteB.previewUrl}
+          isWinner={bWins}
+        />
       </div>
 
-      <div className="results-row">
-        <div className="results-label">
-          <span className="results-name">Site B</span>
-          <span className="results-count">{results.siteB} vote{results.siteB > 1 ? 's' : ''} — {pctB}%</span>
-        </div>
-        <div className="results-bar-track">
-          <div
-            className={`results-bar-fill ${tie || !aWins ? 'leading' : 'trailing'}`}
-            style={{ width: `${pctB}%` }}
-          />
-        </div>
+      <div className="res-combined-bar">
+        <div className="res-bar-a" style={{ width: `${pctA}%` }} />
+        <div className="res-bar-b" style={{ width: `${pctB}%` }} />
       </div>
 
-      <p className="results-total">{total} vote{total > 1 ? 's' : ''} au total</p>
+      <p className="res-total">{total} vote{total > 1 ? 's' : ''} au total</p>
     </div>
   )
 }
