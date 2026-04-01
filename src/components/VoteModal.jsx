@@ -153,19 +153,20 @@ function VoteModal({ siteId, onClose }) {
 
             {step === 'phone' && (
               <div className="step-phone">
-                <label htmlFor="phone">Numéro WhatsApp</label>
+                <label htmlFor="phone">Numéro WhatsApp (avec indicatif pays)</label>
                 <div className="input-wrapper">
                   <span className="prefix">+</span>
                   <input
                     ref={phoneRef}
                     id="phone"
                     type="tel"
-                    placeholder="22960000000"
+                    placeholder="2290160000000"
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError('') }}
                     onKeyDown={handlePhoneKey}
                   />
                 </div>
+                <p className="phone-hint">Ex : 2290160000000 ou 33600000000</p>
                 {error && <p className="modal-error">{error}</p>}
                 <button
                   className="btn-primary"

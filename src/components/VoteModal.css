@@ -114,6 +114,13 @@
   color: #A09D98;
 }
 
+.phone-hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
 .modal-error {
   color: var(--accent);
   font-size: 0.9rem;

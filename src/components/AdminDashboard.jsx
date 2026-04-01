@@ -8,6 +8,7 @@ function AdminDashboard({ token, onLogout }) {
   })
   const [resultsPublished, setResultsPublished] = useState(false)
   const [results, setResults] = useState(null)
+  const [voters, setVoters] = useState([])
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -16,14 +17,16 @@ function AdminDashboard({ token, onLogout }) {
     Promise.all([
       fetch('/api/get-config').then((r) => r.json()),
       fetch('/api/get-results').then((r) => r.json()),
+      fetch('/api/get-voters', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()),
     ])
-      .then(([configData, resultsData]) => {
+      .then(([configData, resultsData, votersData]) => {
         setConfig({
           siteA: { previewUrl: configData.siteA?.previewUrl || '', imageUrl: configData.siteA?.imageUrl || '' },
           siteB: { previewUrl: configData.siteB?.previewUrl || '', imageUrl: configData.siteB?.imageUrl || '' },
         })
         setResultsPublished(!!configData.resultsPublished)
         setResults(resultsData)
+        setVoters(votersData.voters || [])
       })
       .catch(() => setMessage('Erreur lors du chargement'))
       .finally(() => setLoading(false))
@@ -125,6 +128,19 @@ function AdminDashboard({ token, onLogout }) {
           <p className="admin-result-total">{(results.siteA || 0) + (results.siteB || 0)} vote{((results.siteA || 0) + (results.siteB || 0)) > 1 ? 's' : ''} au total</p>
         </div>
       )}
+
+      <div className="admin-voters-section">
+        <h2>Votants ({voters.length})</h2>
+        {voters.length === 0 ? (
+          <p className="admin-voters-empty">Aucun vote enregistré</p>
+        ) : (
+          <ul className="admin-voters-list">
+            {voters.map((num) => (
+              <li key={num}>+{num}</li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <div className="admin-results-toggle">
         <label className="toggle-label">
