@@ -39,16 +39,19 @@ export default async function handler(req, res) {
 
   // Envoyer via WaChap
   try {
-    const wachapRes = await fetch('https://app.wachap.com/api/v1/message/send-text', {
+    const wachapRes = await fetch('https://api.wachap.com/v1/whatsapp/messages/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.WACHAP_API_KEY}`,
       },
       body: JSON.stringify({
-        phoneNumberId: process.env.WACHAP_PHONE_ID,
-        to: numero,
-        text: `Votre code de vote Waxané est : ${code}. Valable 24h.`,
+        data: {
+          accountId: process.env.WACHAP_PHONE_ID,
+          to: `+${numero}`,
+          type: 'text',
+          content: `Votre code de vote Waxané est : ${code}. Valable 24h.`,
+        },
       }),
     })
 

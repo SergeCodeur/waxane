@@ -69,12 +69,15 @@ ADMIN_PASSWORD=
 ## WaChap — appel API
 
 ```
-POST https://app.wachap.com/api/v1/message/send-text
+POST https://api.wachap.com/v1/whatsapp/messages/send
 Authorization: Bearer {WACHAP_API_KEY}
 {
-  "phoneNumberId": "{WACHAP_PHONE_ID}",
-  "to": "{numero}",
-  "text": "Votre code de vote Waxané est : {code}. Valable 24h."
+  "data": {
+    "accountId": "{WACHAP_PHONE_ID}",
+    "to": "+{numero}",
+    "type": "text",
+    "content": "Votre code de vote Waxané est : {code}. Valable 24h."
+  }
 }
 ```
 
