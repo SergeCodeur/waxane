@@ -53,10 +53,13 @@ export default async function handler(req, res) {
     })
 
     if (!wachapRes.ok) {
-      return res.status(500).json({ error: 'send_failed' })
+      const errorBody = await wachapRes.text().catch(() => 'no body')
+      console.error('WaChap error:', wachapRes.status, errorBody)
+      return res.status(500).json({ error: 'send_failed', detail: `WaChap ${wachapRes.status}` })
     }
-  } catch {
-    return res.status(500).json({ error: 'send_failed' })
+  } catch (err) {
+    console.error('WaChap fetch error:', err)
+    return res.status(500).json({ error: 'send_failed', detail: err.message })
   }
 
   return res.status(200).json({ success: true })
