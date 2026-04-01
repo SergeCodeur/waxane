@@ -114,6 +114,21 @@
   color: #A09D98;
 }
 
+.modal-error {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.step-confirmed {
+  text-align: center;
+}
+
+.step-confirmed h2 {
+  margin-bottom: 0.5rem;
+}
+
 .btn-primary {
   width: 100%;
   padding: 1rem;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import SiteCard from './components/SiteCard.jsx'
 import VoteModal from './components/VoteModal.jsx'
+import Results from './components/Results.jsx'
 import AdminLogin from './components/AdminLogin.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
 import './App.css'
@@ -9,12 +10,17 @@ import './App.css'
 function VotePage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSite, setSelectedSite] = useState(null)
+  const [hasVoted, setHasVoted] = useState(false)
   const [config, setConfig] = useState(null)
+  const [resultsPublished, setResultsPublished] = useState(false)
 
   useEffect(() => {
     fetch('/api/get-config')
       .then((r) => r.json())
-      .then(setConfig)
+      .then((data) => {
+        setConfig(data)
+        setResultsPublished(!!data.resultsPublished)
+      })
       .catch(() => {
         setConfig({
           siteA: { previewUrl: '#', imageUrl: '' },
@@ -28,9 +34,10 @@ function VotePage() {
     setModalOpen(true)
   }
 
-  const handleClose = () => {
+  const handleClose = (voted) => {
     setModalOpen(false)
     setSelectedSite(null)
+    if (voted) setHasVoted(true)
   }
 
   return (
@@ -49,14 +56,18 @@ function VotePage() {
           previewUrl={config?.siteA?.previewUrl || '#'}
           imageUrl={config?.siteA?.imageUrl || ''}
           onVote={() => handleVote('siteA')}
+          disabled={hasVoted}
         />
         <SiteCard
           name="Site B"
           previewUrl={config?.siteB?.previewUrl || '#'}
           imageUrl={config?.siteB?.imageUrl || ''}
           onVote={() => handleVote('siteB')}
+          disabled={hasVoted}
         />
       </main>
+
+      {hasVoted && <Results published={resultsPublished} />}
 
       {modalOpen && (
         <VoteModal

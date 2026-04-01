@@ -6,6 +6,7 @@ function AdminDashboard({ token, onLogout }) {
     siteA: { previewUrl: '', imageUrl: '' },
     siteB: { previewUrl: '', imageUrl: '' },
   })
+  const [resultsPublished, setResultsPublished] = useState(false)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -18,6 +19,7 @@ function AdminDashboard({ token, onLogout }) {
           siteA: { previewUrl: data.siteA?.previewUrl || '', imageUrl: data.siteA?.imageUrl || '' },
           siteB: { previewUrl: data.siteB?.previewUrl || '', imageUrl: data.siteB?.imageUrl || '' },
         })
+        setResultsPublished(!!data.resultsPublished)
       })
       .catch(() => setMessage('Erreur lors du chargement de la config'))
       .finally(() => setLoading(false))
@@ -41,7 +43,7 @@ function AdminDashboard({ token, onLogout }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify({ ...config, resultsPublished }),
       })
 
       if (!res.ok) {
@@ -101,6 +103,20 @@ function AdminDashboard({ token, onLogout }) {
             )}
           </div>
         ))}
+      </div>
+
+      <div className="admin-results-toggle">
+        <label className="toggle-label">
+          <input
+            type="checkbox"
+            checked={resultsPublished}
+            onChange={(e) => setResultsPublished(e.target.checked)}
+          />
+          <span className="toggle-switch" />
+          <span className="toggle-text">
+            {resultsPublished ? 'Résultats visibles par les votants' : 'Résultats masqués'}
+          </span>
+        </label>
       </div>
 
       {message && (

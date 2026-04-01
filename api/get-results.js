@@ -10,18 +10,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const [config, resultsPublished] = await Promise.all([
-    redis.get('config:sites'),
-    redis.get('config:resultsPublished'),
+  const [siteA, siteB] = await Promise.all([
+    redis.get('votes:siteA'),
+    redis.get('votes:siteB'),
   ])
 
-  const defaultConfig = {
-    siteA: { previewUrl: '#', imageUrl: '' },
-    siteB: { previewUrl: '#', imageUrl: '' },
-  }
-
   return res.status(200).json({
-    ...(config || defaultConfig),
-    resultsPublished: resultsPublished === '1',
+    siteA: Number(siteA) || 0,
+    siteB: Number(siteB) || 0,
   })
 }

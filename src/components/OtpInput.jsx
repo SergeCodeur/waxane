@@ -27,8 +27,23 @@ function OtpInput({ length = 6, onChange, onComplete }) {
   }
 
   const handleKeyDown = (e, index) => {
-    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+    if (e.key === 'Backspace') {
+      if (!e.target.value && index > 0) {
+        inputs.current[index - 1].focus()
+        inputs.current[index - 1].value = ''
+        onChange(getCode())
+      }
+      return
+    }
+
+    if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault()
       inputs.current[index - 1].focus()
+    }
+
+    if (e.key === 'ArrowRight' && index < length - 1) {
+      e.preventDefault()
+      inputs.current[index + 1].focus()
     }
   }
 
@@ -45,7 +60,12 @@ function OtpInput({ length = 6, onChange, onComplete }) {
     const focusIdx = Math.min(data.length, length - 1)
     inputs.current[focusIdx]?.focus()
 
-    onChange(getCode())
+    const code = getCode()
+    onChange(code)
+
+    if (code.length === length) {
+      onComplete?.()
+    }
   }
 
   return (

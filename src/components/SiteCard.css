@@ -88,6 +88,12 @@
   background: var(--accent-hover);
 }
 
-.btn-vote:active {
+.btn-vote:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+.btn-vote:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--text-muted);
 }
