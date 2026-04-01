@@ -79,6 +79,37 @@ function VotePage() {
   )
 }
 
+function ResultsPage() {
+  const [published, setPublished] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/get-config')
+      .then((r) => r.json())
+      .then((data) => setPublished(!!data.resultsPublished))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="results-page">
+        <p className="results-page-loading">Chargement...</p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <header className="header">
+        <h1>Duel Web Dev</h1>
+        <p className="subtitle">Résultats du vote</p>
+      </header>
+      <Results published={published} />
+    </>
+  )
+}
+
 function AdminPage() {
   const [token, setToken] = useState(() => sessionStorage.getItem('admin_token') || '')
 
@@ -103,6 +134,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<VotePage />} />
+      <Route path="/results" element={<ResultsPage />} />
       <Route path="/admin" element={<AdminPage />} />
     </Routes>
   )
