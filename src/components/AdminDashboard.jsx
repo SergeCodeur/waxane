@@ -7,21 +7,25 @@ function AdminDashboard({ token, onLogout }) {
     siteB: { previewUrl: '', imageUrl: '' },
   })
   const [resultsPublished, setResultsPublished] = useState(false)
+  const [results, setResults] = useState(null)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    fetch('/api/get-config')
-      .then((r) => r.json())
-      .then((data) => {
+    Promise.all([
+      fetch('/api/get-config').then((r) => r.json()),
+      fetch('/api/get-results').then((r) => r.json()),
+    ])
+      .then(([configData, resultsData]) => {
         setConfig({
-          siteA: { previewUrl: data.siteA?.previewUrl || '', imageUrl: data.siteA?.imageUrl || '' },
-          siteB: { previewUrl: data.siteB?.previewUrl || '', imageUrl: data.siteB?.imageUrl || '' },
+          siteA: { previewUrl: configData.siteA?.previewUrl || '', imageUrl: configData.siteA?.imageUrl || '' },
+          siteB: { previewUrl: configData.siteB?.previewUrl || '', imageUrl: configData.siteB?.imageUrl || '' },
         })
-        setResultsPublished(!!data.resultsPublished)
+        setResultsPublished(!!configData.resultsPublished)
+        setResults(resultsData)
       })
-      .catch(() => setMessage('Erreur lors du chargement de la config'))
+      .catch(() => setMessage('Erreur lors du chargement'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -104,6 +108,23 @@ function AdminDashboard({ token, onLogout }) {
           </div>
         ))}
       </div>
+
+      {results && (
+        <div className="admin-results-section">
+          <h2>Résultats</h2>
+          <div className="admin-results-grid">
+            <div className="admin-result-item">
+              <span className="admin-result-name">Site A</span>
+              <span className="admin-result-votes">{results.siteA || 0} vote{(results.siteA || 0) > 1 ? 's' : ''}</span>
+            </div>
+            <div className="admin-result-item">
+              <span className="admin-result-name">Site B</span>
+              <span className="admin-result-votes">{results.siteB || 0} vote{(results.siteB || 0) > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+          <p className="admin-result-total">{(results.siteA || 0) + (results.siteB || 0)} vote{((results.siteA || 0) + (results.siteB || 0)) > 1 ? 's' : ''} au total</p>
+        </div>
+      )}
 
       <div className="admin-results-toggle">
         <label className="toggle-label">

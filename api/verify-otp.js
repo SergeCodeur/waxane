@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   }
 
   const { numero, code, siteChoice } = req.body || {}
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown'
 
   if (!numero || !code) {
     return res.status(400).json({ error: 'missing_fields' })
@@ -27,10 +28,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_code' })
   }
 
-  // Vote valide : incrémenter, marquer comme voté, supprimer OTP
+  // Vote valide : incrémenter, marquer numéro + IP comme votés, supprimer OTP
   await Promise.all([
     redis.incr(`votes:${siteChoice}`),
     redis.set(`voted:${numero}`, '1'),
+    redis.set(`voted:ip:${ip}`, '1'),
     redis.del(`otp:${numero}`),
   ])
 

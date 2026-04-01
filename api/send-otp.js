@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   }
 
   const { numero, siteChoice } = req.body || {}
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown'
 
   if (!numero || typeof numero !== 'string' || !numero.trim()) {
     return res.status(400).json({ error: 'missing_numero' })
@@ -20,9 +21,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_site_choice' })
   }
 
-  // Vérifier si ce numéro a déjà voté
-  const alreadyVoted = await redis.get(`voted:${numero}`)
-  if (alreadyVoted) {
+  // Vérifier si ce numéro ou cette IP a déjà voté
+  const [alreadyVotedNum, alreadyVotedIp] = await Promise.all([
+    redis.get(`voted:${numero}`),
+    redis.get(`voted:ip:${ip}`),
+  ])
+
+  if (alreadyVotedNum || alreadyVotedIp) {
     return res.status(403).json({ error: 'already_voted' })
   }
 
